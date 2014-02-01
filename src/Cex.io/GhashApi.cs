@@ -54,7 +54,7 @@ namespace Nextmethod.Cex
                 return await this.PostToService(
                     basePath,
                     EmptyRequestParams,
-                    Cex.Hashrate.FromDynamic,
+                    Entities.Hashrate.FromDynamic,
                     cancelToken
                     );
             }

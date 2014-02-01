@@ -1,10 +1,5 @@
-﻿using System;
-using System.Linq;
-
-namespace Nextmethod.Cex
-{
-    public class Ticker
-    {
+﻿namespace Nextmethod.Cex.Entities {
+    public class Ticker {
 
         public SymbolPair SymbolPair { get; internal set; }
 
@@ -23,24 +18,21 @@ namespace Nextmethod.Cex
         public Timestamp Timestamp { get; internal set; }
 
 
-        internal static Ticker FromDynamic(SymbolPair symbolPair, dynamic data)
-        {
-            return new Ticker
-            {
+        internal static Ticker FromDynamic( SymbolPair symbolPair, dynamic data ) {
+            return new Ticker {
                 SymbolPair = symbolPair,
-                Ask = decimal.Parse(data["ask"]),
-                Bid = decimal.Parse(data["bid"]),
-                High = decimal.Parse(data["high"]),
-                Last = decimal.Parse(data["last"]),
-                Low = decimal.Parse(data["low"]),
-                Volume = decimal.Parse(data["volume"]),
-                Timestamp = data["timestamp"]
+                Ask = decimal.Parse( data[ "ask" ] ),
+                Bid = decimal.Parse( data[ "bid" ] ),
+                High = decimal.Parse( data[ "high" ] ),
+                Last = decimal.Parse( data[ "last" ] ),
+                Low = decimal.Parse( data[ "low" ] ),
+                Volume = decimal.Parse( data[ "volume" ] ),
+                Timestamp = data[ "timestamp" ]
             };
         }
 
-        public override string ToString()
-        {
-            return string.Format("SymbolPair: {0}, Ask: {1}, Bid: {2}, High: {3}, Last: {4}, Low: {5}, Volume: {6}, Timestamp: {7}", SymbolPair, Ask, Bid, High, Last, Low, Volume, Timestamp);
+        public override string ToString() {
+            return string.Format( "SymbolPair: {0}, Ask: {1}, Bid: {2}, High: {3}, Last: {4}, Low: {5}, Volume: {6}, Timestamp: {7}", this.SymbolPair, this.Ask, this.Bid, this.High, this.Last, this.Low, this.Volume, this.Timestamp );
         }
 
     }

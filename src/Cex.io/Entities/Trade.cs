@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace Nextmethod.Cex
 {
+    using Entities;
 
     public class Trade
     {

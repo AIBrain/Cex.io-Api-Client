@@ -1,10 +1,5 @@
-﻿using System;
-using System.Linq;
-
-namespace Nextmethod.Cex
-{
-    public enum OrderType
-    {
+﻿namespace Nextmethod.Cex.Entities {
+    public enum OrderType {
 
         Buy,
 

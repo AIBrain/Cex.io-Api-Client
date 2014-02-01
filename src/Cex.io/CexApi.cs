@@ -55,7 +55,7 @@ namespace Nextmethod.Cex
             {
                 return await this.GetFromService(
                     path,
-                    json => Cex.Ticker.FromDynamic(pair, json),
+                    json => Entities.Ticker.FromDynamic(pair, json),
                     cancelToken
                     );
             }
@@ -74,7 +74,7 @@ namespace Nextmethod.Cex
             {
                 return await this.GetFromService(
                     path,
-                    Cex.OrderBook.FromDynamic,
+                    Entities.OrderBook.FromDynamic,
                     cancelToken
                     );
             }

@@ -1,34 +1,27 @@
-﻿using System;
-using System.Linq;
+﻿namespace Nextmethod.Cex.Entities {
+    using System;
 
-namespace Nextmethod.Cex
-{
-    public struct OrderBookOrder
-    {
+    public struct OrderBookOrder {
 
         private readonly decimal _amount;
 
         private readonly decimal _price;
 
-        public OrderBookOrder(decimal price, decimal amount)
-        {
-            _price = price;
-            _amount = amount;
+        public OrderBookOrder( decimal price, decimal amount ) {
+            this._price = price;
+            this._amount = amount;
         }
 
-        public decimal Price
-        {
-            get { return _price; }
+        public decimal Price {
+            get { return this._price; }
         }
 
-        public decimal Amount
-        {
-            get { return _amount; }
+        public decimal Amount {
+            get { return this._amount; }
         }
 
-        public override string ToString()
-        {
-            return String.Format("Price: {0}, Amount: {1}", Price, Amount);
+        public override string ToString() {
+            return String.Format( "Price: {0}, Amount: {1}", this.Price, this.Amount );
         }
 
     }
