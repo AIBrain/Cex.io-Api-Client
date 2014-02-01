@@ -1,18 +1,17 @@
 ﻿namespace Nextmethod.Cex.Entities {
     using System;
     using System.Diagnostics;
+    using Annotations;
 
     public struct Timestamp : IComparable, IComparable<Timestamp>, IFormattable, IEquatable<Timestamp> {
 
         [DebuggerBrowsable( DebuggerBrowsableState.Never )]
         public static readonly DateTime EpochStart = new DateTime( 1970, 1, 1, 0, 0, 0, DateTimeKind.Utc );
 
-        // ReSharper disable InconsistentNaming
-        private readonly uint Value;
-        // ReSharper restore InconsistentNaming
+        private readonly uint _value;
 
         public Timestamp( uint value ) {
-            this.Value = value;
+            this._value = value;
         }
 
         [DebuggerBrowsable( DebuggerBrowsableState.Never )]
@@ -36,20 +35,17 @@
             return this.ToUtcDateTime().ToString( format, formatProvider );
         }
 
-
-        #region Equality Crap
-
-        public override bool Equals( object obj ) {
+        public override bool Equals( [CanBeNull] object obj ) {
             if ( ReferenceEquals( null, obj ) ) { return false; }
             return obj is Timestamp && this.Equals( ( Timestamp )obj );
         }
 
         public bool Equals( Timestamp other ) {
-            return this.Value == other.Value;
+            return this._value == other._value;
         }
 
         public override int GetHashCode() {
-            return this.Value.GetHashCode();
+            return this._value.GetHashCode();
         }
 
         public static bool operator ==( Timestamp left, Timestamp right ) {
@@ -60,11 +56,6 @@
             return !left.Equals( right );
         }
 
-        #endregion
-
-
-        #region Comparable Crap
-
         public int CompareTo( object obj ) {
             if ( obj == null ) return 1;
             if ( !( obj is Timestamp ) ) throw new ArgumentException( "Object must be of type Timestamp" );
@@ -73,13 +64,8 @@
         }
 
         public int CompareTo( Timestamp other ) {
-            return this.Value.CompareTo( other.Value );
+            return this._value.CompareTo( other._value );
         }
-
-        #endregion
-
-
-        #region Conversion Operators
 
         public static implicit operator Timestamp( string value ) {
             if ( string.IsNullOrWhiteSpace( "value" ) ) throw new ArgumentNullException( "value", "Value can not be null or whitespace" );
@@ -106,7 +92,7 @@
         }
 
         public static implicit operator DateTime( Timestamp value ) {
-            return EpochStart.AddSeconds( value.Value ).ToUniversalTime();
+            return EpochStart.AddSeconds( value._value ).ToUniversalTime();
         }
 
         public static implicit operator Timestamp( DateTime value ) {
@@ -117,9 +103,5 @@
         public static implicit operator Timestamp( TimeSpan value ) {
             return new DateTime( value.Ticks );
         }
-
-        #endregion
-
-
     }
 }
