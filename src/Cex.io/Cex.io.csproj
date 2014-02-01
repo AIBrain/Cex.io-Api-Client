@@ -46,6 +46,7 @@
     <Compile Include="Entities\SymbolBalance.cs" />
     <Compile Include="Entities\SymbolPair.cs" />
     <Compile Include="Entities\WorkerHashrate.cs" />
+    <Compile Include="Entities\WorkerRejects.cs" />
     <Compile Include="Exceptions\CexInvalidApiKeyException.cs" />
     <Compile Include="Exceptions\CexPermissionDeniedException.cs" />
     <Compile Include="GhashApi.cs" />

@@ -4,6 +4,8 @@ using System.Net.Http;
 
 namespace Nextmethod.Cex
 {
+    using Exceptions;
+
     public class CexNonceException : CexApiException
     {
 

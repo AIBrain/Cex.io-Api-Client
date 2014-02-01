@@ -43,8 +43,6 @@
             return !left.Equals( right );
         }
 
-        #region Comparable Crap
-
         public int CompareTo( object obj ) {
             if ( obj == null ) return 1;
             if ( !( obj is TradeId ) ) throw new ArgumentException( "Object must be of type TradeId" );
@@ -55,7 +53,6 @@
         public int CompareTo( TradeId other ) {
             return other == null ? 1 : this._id.CompareTo( other._id );
         }
-        #endregion
 
         public static implicit operator TradeId( int value ) {
             if ( value < 0 ) throw new ArgumentOutOfRangeException( "value", value, "Value must be >= 0" );
