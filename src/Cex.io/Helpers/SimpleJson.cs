@@ -693,7 +693,6 @@ namespace Nextmethod.Cex
         private static IDictionary<string, object> ParseObject(char[] json, ref int index, ref bool success)
         {
             IDictionary<string, object> table = new JsonObject();
-            int token;
 
             // {
             NextToken(json, ref index);
@@ -701,7 +700,7 @@ namespace Nextmethod.Cex
             var done = false;
             while (true)
             {
-                token = LookAhead(json, index);
+                var token = LookAhead(json, index);
                 if (token == TOKEN_NONE)
                 {
                     success = false;
