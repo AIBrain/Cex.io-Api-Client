@@ -70,7 +70,7 @@
         public static implicit operator Timestamp( string value ) {
             if ( string.IsNullOrWhiteSpace( "value" ) ) throw new ArgumentNullException( "value", "Value can not be null or whitespace" );
 
-            long val = long.Parse( value );
+            var val = long.Parse( value );
             if ( val > uint.MaxValue ) {
                 return val;
             }

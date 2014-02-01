@@ -173,7 +173,7 @@ namespace Nextmethod.Cex
             {
                 throw new ArgumentOutOfRangeException("index");
             }
-            int i = 0;
+            var i = 0;
             foreach (var o in obj)
             {
                 if (i++ == index) { return o.Value; }
@@ -289,7 +289,7 @@ namespace Nextmethod.Cex
         public void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
         {
             if (array == null) { throw new ArgumentNullException("array"); }
-            int num = Count;
+            var num = Count;
             foreach (var kvp in this)
             {
                 array[arrayIndex++] = kvp;
@@ -574,11 +574,11 @@ namespace Nextmethod.Cex
         [SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate", Justification = "Need to support .NET 2")]
         public static bool TryDeserializeObject(string json, out object obj)
         {
-            bool success = true;
+            var success = true;
             if (json != null)
             {
-                char[] charArray = json.ToCharArray();
-                int index = 0;
+                var charArray = json.ToCharArray();
+                var index = 0;
                 obj = ParseValue(charArray, ref index, ref success);
             }
             else
@@ -591,7 +591,7 @@ namespace Nextmethod.Cex
 
         public static object DeserializeObject(string json, Type type, IJsonSerializerStrategy jsonSerializerStrategy)
         {
-            object jsonObject = DeserializeObject(json);
+            var jsonObject = DeserializeObject(json);
             return type == null || jsonObject != null && ReflectionUtils.IsAssignableFrom(jsonObject.GetType(), type)
                 ? jsonObject
                 : (jsonSerializerStrategy ?? CurrentJsonSerializerStrategy).DeserializeObject(jsonObject, type);
@@ -621,7 +621,7 @@ namespace Nextmethod.Cex
         public static string SerializeObject(object json, IJsonSerializerStrategy jsonSerializerStrategy)
         {
             var builder = new StringBuilder(BUILDER_CAPACITY);
-            bool success = SerializeValue(jsonSerializerStrategy, json, builder);
+            var success = SerializeValue(jsonSerializerStrategy, json, builder);
             return (success ? builder.ToString() : null);
         }
 
@@ -640,16 +640,16 @@ namespace Nextmethod.Cex
             var sb = new StringBuilder();
             char c;
 
-            for (int i = 0; i < jsonString.Length;)
+            for (var i = 0; i < jsonString.Length;)
             {
                 c = jsonString[i++];
 
                 if (c == '\\')
                 {
-                    int remainingLength = jsonString.Length - i;
+                    var remainingLength = jsonString.Length - i;
                     if (remainingLength >= 2)
                     {
-                        char lookahead = jsonString[i];
+                        var lookahead = jsonString[i];
                         if (lookahead == '\\')
                         {
                             sb.Append('\\');
@@ -698,8 +698,8 @@ namespace Nextmethod.Cex
             // {
             NextToken(json, ref index);
 
-            bool done = false;
-            while (!done)
+            var done = false;
+            while (true)
             {
                 token = LookAhead(json, index);
                 if (token == TOKEN_NONE)
@@ -719,7 +719,7 @@ namespace Nextmethod.Cex
                 else
                 {
                     // name
-                    string name = ParseString(json, ref index, ref success);
+                    var name = ParseString(json, ref index, ref success);
                     if (!success)
                     {
                         success = false;
@@ -733,7 +733,7 @@ namespace Nextmethod.Cex
                         return null;
                     }
                     // value
-                    object value = ParseValue(json, ref index, ref success);
+                    var value = ParseValue(json, ref index, ref success);
                     if (!success)
                     {
                         success = false;
@@ -752,10 +752,10 @@ namespace Nextmethod.Cex
             // [
             NextToken(json, ref index);
 
-            bool done = false;
-            while (!done)
+            var done = false;
+            while (true)
             {
-                int token = LookAhead(json, index);
+                var token = LookAhead(json, index);
                 if (token == TOKEN_NONE)
                 {
                     success = false;
@@ -772,7 +772,7 @@ namespace Nextmethod.Cex
                 }
                 else
                 {
-                    object value = ParseValue(json, ref index, ref success);
+                    var value = ParseValue(json, ref index, ref success);
                     if (!success)
                     {
                         return null;
@@ -814,13 +814,13 @@ namespace Nextmethod.Cex
         private static string ParseString(char[] json, ref int index, ref bool success)
         {
             var s = new StringBuilder(BUILDER_CAPACITY);
-            char c;
 
             EatWhitespace(json, ref index);
 
             // "
-            c = json[index++];
-            bool complete = false;
+            var c = json[index++];
+            var complete = false;
+// ReSharper disable once ConditionIsAlwaysTrueOrFalse
             while (!complete)
             {
                 if (index == json.Length)
@@ -875,7 +875,7 @@ namespace Nextmethod.Cex
                     }
                     else if (c == 'u')
                     {
-                        int remainingLength = json.Length - index;
+                        var remainingLength = json.Length - index;
                         if (remainingLength >= 4)
                         {
                             // parse the 32 bit hex into an integer codepoint
@@ -952,8 +952,8 @@ namespace Nextmethod.Cex
         private static object ParseNumber(char[] json, ref int index, ref bool success)
         {
             EatWhitespace(json, ref index);
-            int lastIndex = GetLastIndexOfNumber(json, index);
-            int charLength = (lastIndex - index) + 1;
+            var lastIndex = GetLastIndexOfNumber(json, index);
+            var charLength = (lastIndex - index) + 1;
             object returnNumber;
             var str = new string(json, index, charLength);
             if (str.IndexOf(".", StringComparison.OrdinalIgnoreCase) != -1 || str.IndexOf("e", StringComparison.OrdinalIgnoreCase) != -1)
@@ -972,39 +972,39 @@ namespace Nextmethod.Cex
             return returnNumber;
         }
 
-        private static int GetLastIndexOfNumber(char[] json, int index)
+        private static int GetLastIndexOfNumber(IList< char > json, int index)
         {
             int lastIndex;
-            for (lastIndex = index; lastIndex < json.Length; lastIndex++)
+            for (lastIndex = index; lastIndex < json.Count; lastIndex++)
             {
                 if ("0123456789+-.eE".IndexOf(json[lastIndex]) == -1) { break; }
             }
             return lastIndex - 1;
         }
 
-        private static void EatWhitespace(char[] json, ref int index)
+        private static void EatWhitespace(IList< char > json, ref int index)
         {
-            for (; index < json.Length; index++)
+            for (; index < json.Count; index++)
             {
                 if (" \t\n\r\b\f".IndexOf(json[index]) == -1) { break; }
             }
         }
 
-        private static int LookAhead(char[] json, int index)
+        private static int LookAhead(IList< char > json, int index)
         {
-            int saveIndex = index;
+            var saveIndex = index;
             return NextToken(json, ref saveIndex);
         }
 
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-        private static int NextToken(char[] json, ref int index)
+        private static int NextToken(IList< char > json, ref int index)
         {
             EatWhitespace(json, ref index);
-            if (index == json.Length)
+            if (index == json.Count)
             {
                 return TOKEN_NONE;
             }
-            char c = json[index];
+            var c = json[index];
             index++;
             switch (c)
             {
@@ -1036,7 +1036,7 @@ namespace Nextmethod.Cex
                     return TOKEN_COLON;
             }
             index--;
-            int remainingLength = json.Length - index;
+            var remainingLength = json.Count - index;
             // false
             if (remainingLength >= 5)
             {
@@ -1069,7 +1069,7 @@ namespace Nextmethod.Cex
 
         private static bool SerializeValue(IJsonSerializerStrategy jsonSerializerStrategy, object value, StringBuilder builder)
         {
-            bool success = true;
+            var success = true;
             var stringValue = value as string;
             if (stringValue != null)
             {
@@ -1126,13 +1126,13 @@ namespace Nextmethod.Cex
         private static bool SerializeObject(IJsonSerializerStrategy jsonSerializerStrategy, IEnumerable keys, IEnumerable values, StringBuilder builder)
         {
             builder.Append("{");
-            IEnumerator ke = keys.GetEnumerator();
-            IEnumerator ve = values.GetEnumerator();
-            bool first = true;
+            var ke = keys.GetEnumerator();
+            var ve = values.GetEnumerator();
+            var first = true;
             while (ke.MoveNext() && ve.MoveNext())
             {
-                object key = ke.Current;
-                object value = ve.Current;
+                var key = ke.Current;
+                var value = ve.Current;
                 if (!first)
                 {
                     builder.Append(",");
@@ -1157,7 +1157,7 @@ namespace Nextmethod.Cex
         private static bool SerializeArray(IJsonSerializerStrategy jsonSerializerStrategy, IEnumerable anArray, StringBuilder builder)
         {
             builder.Append("[");
-            bool first = true;
+            var first = true;
             foreach (var value in anArray)
             {
                 if (!first)
@@ -1177,10 +1177,10 @@ namespace Nextmethod.Cex
         private static bool SerializeString(string aString, StringBuilder builder)
         {
             builder.Append("\"");
-            char[] charArray = aString.ToCharArray();
-            for (int i = 0; i < charArray.Length; i++)
+            var charArray = aString.ToCharArray();
+            for (var i = 0; i < charArray.Length; i++)
             {
-                char c = charArray[i];
+                var c = charArray[i];
                 if (c == '"')
                 {
                     builder.Append("\\\"");
@@ -1378,7 +1378,7 @@ namespace Nextmethod.Cex
             {
                 if (propertyInfo.CanRead)
                 {
-                    MethodInfo getMethod = ReflectionUtils.GetGetterMethodInfo(propertyInfo);
+                    var getMethod = ReflectionUtils.GetGetterMethodInfo(propertyInfo);
                     if (getMethod.IsStatic || !getMethod.IsPublic)
                     {
                         continue;
@@ -1404,7 +1404,7 @@ namespace Nextmethod.Cex
             {
                 if (propertyInfo.CanWrite)
                 {
-                    MethodInfo setMethod = ReflectionUtils.GetSetterMethodInfo(propertyInfo);
+                    var setMethod = ReflectionUtils.GetSetterMethodInfo(propertyInfo);
                     if (setMethod.IsStatic || !setMethod.IsPublic)
                     {
                         continue;
@@ -1464,7 +1464,7 @@ namespace Nextmethod.Cex
                     }
                     if (type == typeof (Uri))
                     {
-                        bool isValid = Uri.IsWellFormedUriString(str, UriKind.RelativeOrAbsolute);
+                        var isValid = Uri.IsWellFormedUriString(str, UriKind.RelativeOrAbsolute);
 
                         Uri result;
                         if (isValid && Uri.TryCreate(str, UriKind.RelativeOrAbsolute, out result))
@@ -1497,8 +1497,8 @@ namespace Nextmethod.Cex
                 return value;
             }
 
-            bool valueIsLong = value is long;
-            bool valueIsDouble = value is double;
+            var valueIsLong = value is long;
+            var valueIsDouble = value is double;
             if ((valueIsLong && type == typeof (long)) || (valueIsDouble && type == typeof (double)))
             {
                 return value;
@@ -1514,16 +1514,16 @@ namespace Nextmethod.Cex
                 var objects = value as IDictionary<string, object>;
                 if (objects != null)
                 {
-                    IDictionary<string, object> jsonObject = objects;
+                    var jsonObject = objects;
 
                     if (ReflectionUtils.IsTypeDictionary(type))
                     {
                         // if dictionary then
-                        Type[] types = ReflectionUtils.GetGenericTypeArguments(type);
-                        Type keyType = types[0];
-                        Type valueType = types[1];
+                        var types = ReflectionUtils.GetGenericTypeArguments(type);
+                        var keyType = types[0];
+                        var valueType = types[1];
 
-                        Type genericType = typeof (Dictionary<,>).MakeGenericType(keyType, valueType);
+                        var genericType = typeof (Dictionary<,>).MakeGenericType(keyType, valueType);
 
                         var dict = (IDictionary) ConstructorCache[genericType]();
 
@@ -1560,13 +1560,13 @@ namespace Nextmethod.Cex
                     var valueAsList = value as IList<object>;
                     if (valueAsList != null)
                     {
-                        IList<object> jsonObject = valueAsList;
+                        var jsonObject = valueAsList;
                         IList list = null;
 
                         if (type.IsArray)
                         {
                             list = (IList) ConstructorCache[type](jsonObject.Count);
-                            int i = 0;
+                            var i = 0;
                             foreach (var o in jsonObject)
                             {
                                 list[i++] = DeserializeObject(o, type.GetElementType());
@@ -1574,7 +1574,7 @@ namespace Nextmethod.Cex
                         }
                         else if (ReflectionUtils.IsTypeGenericeCollectionInterface(type) || ReflectionUtils.IsAssignableFrom(typeof (IList), type))
                         {
-                            Type innerType = ReflectionUtils.GetGenericListElementType(type);
+                            var innerType = ReflectionUtils.GetGenericListElementType(type);
                             list = (IList) (ConstructorCache[type] ?? ConstructorCache[typeof (List<>).MakeGenericType(innerType)])(jsonObject.Count);
                             foreach (var o in jsonObject)
                             {
@@ -1601,7 +1601,7 @@ namespace Nextmethod.Cex
         [SuppressMessage("Microsoft.Design", "CA1007:UseGenericsWhereAppropriate", Justification = "Need to support .NET 2")]
         protected virtual bool TrySerializeKnownTypes(object input, out object output)
         {
-            bool returnValue = true;
+            var returnValue = true;
             if (input is DateTime)
             {
                 output = ((DateTime) input).ToUniversalTime().ToString(Iso8601Format[0], CultureInfo.InvariantCulture);
@@ -1639,13 +1639,9 @@ namespace Nextmethod.Cex
         {
             if (input == null) { throw new ArgumentNullException("input"); }
             output = null;
-            Type type = input.GetType();
-            if (type.FullName == null)
-            {
-                return false;
-            }
+            var type = input.GetType();
             IDictionary<string, object> obj = new JsonObject();
-            IDictionary<string, ReflectionUtils.GetDelegate> getters = GetCache[type];
+            var getters = GetCache[type];
             foreach (var getter in getters)
             {
                 if (getter.Value != null)
@@ -1790,6 +1786,7 @@ namespace Nextmethod.Cex
 
             public static Type GetGenericListElementType(Type type)
             {
+// ReSharper disable once JoinDeclarationAndInitializer
                 IEnumerable<Type> interfaces;
 #if SIMPLE_JSON_TYPEINFO
                 interfaces = type.GetTypeInfo().ImplementedInterfaces;
@@ -1843,7 +1840,7 @@ namespace Nextmethod.Cex
                     return false;
                 }
 
-                Type genericDefinition = type.GetGenericTypeDefinition();
+                var genericDefinition = type.GetGenericTypeDefinition();
 
                 return (genericDefinition == typeof (IList<>) || genericDefinition == typeof (ICollection<>) || genericDefinition == typeof (IEnumerable<>));
             }
@@ -1869,7 +1866,7 @@ namespace Nextmethod.Cex
                     return false;
                 }
 
-                Type genericDefinition = type.GetGenericTypeDefinition();
+                var genericDefinition = type.GetGenericTypeDefinition();
                 return genericDefinition == typeof (IDictionary<,>);
             }
 
@@ -1899,12 +1896,12 @@ namespace Nextmethod.Cex
 
             public static ConstructorInfo GetConstructorInfo(Type type, params Type[] argsType)
             {
-                IEnumerable<ConstructorInfo> constructorInfos = GetConstructors(type);
+                var constructorInfos = GetConstructors(type);
                 int i;
                 bool matches;
                 foreach (var constructorInfo in constructorInfos)
                 {
-                    ParameterInfo[] parameters = constructorInfo.GetParameters();
+                    var parameters = constructorInfo.GetParameters();
                     if (argsType.Length != parameters.Length)
                     {
                         continue;
@@ -1986,12 +1983,12 @@ namespace Nextmethod.Cex
 
             public static ConstructorDelegate GetConstructorByReflection(ConstructorInfo constructorInfo)
             {
-                return delegate(object[] args) { return constructorInfo.Invoke(args); };
+                return constructorInfo.Invoke;
             }
 
             public static ConstructorDelegate GetConstructorByReflection(Type type, params Type[] argsType)
             {
-                ConstructorInfo constructorInfo = GetConstructorInfo(type, argsType);
+                var constructorInfo = GetConstructorInfo(type, argsType);
                 return constructorInfo == null ? null : GetConstructorByReflection(constructorInfo);
             }
 
@@ -2044,13 +2041,13 @@ namespace Nextmethod.Cex
 
             public static GetDelegate GetGetMethodByReflection(PropertyInfo propertyInfo)
             {
-                MethodInfo methodInfo = GetGetterMethodInfo(propertyInfo);
-                return delegate(object source) { return methodInfo.Invoke(source, EmptyObjects); };
+                var methodInfo = GetGetterMethodInfo(propertyInfo);
+                return source => methodInfo.Invoke( source, EmptyObjects );
             }
 
             public static GetDelegate GetGetMethodByReflection(FieldInfo fieldInfo)
             {
-                return delegate(object source) { return fieldInfo.GetValue(source); };
+                return fieldInfo.GetValue;
             }
 
 #if !SIMPLE_JSON_NO_LINQ_EXPRESSION
@@ -2094,13 +2091,13 @@ namespace Nextmethod.Cex
 
             public static SetDelegate GetSetMethodByReflection(PropertyInfo propertyInfo)
             {
-                MethodInfo methodInfo = GetSetterMethodInfo(propertyInfo);
-                return delegate(object source, object value) { methodInfo.Invoke(source, new object[] {value}); };
+                var methodInfo = GetSetterMethodInfo(propertyInfo);
+                return ( source, value ) => methodInfo.Invoke( source, new object[] { value } );
             }
 
             public static SetDelegate GetSetMethodByReflection(FieldInfo fieldInfo)
             {
-                return delegate(object source, object value) { fieldInfo.SetValue(source, value); };
+                return fieldInfo.SetValue;
             }
 
 #if !SIMPLE_JSON_NO_LINQ_EXPRESSION
@@ -2258,7 +2255,7 @@ namespace Nextmethod.Cex
 
                 private TValue AddValue(TKey key)
                 {
-                    TValue value = _valueFactory(key);
+                    var value = _valueFactory(key);
                     lock (_lock)
                     {
                         if (_dictionary == null)
