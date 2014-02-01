@@ -1,15 +1,9 @@
-﻿using System;
-using System.Linq;
-using System.Net.Http;
+﻿namespace Nextmethod.Cex.Exceptions {
+    using System.Net.Http;
 
-namespace Nextmethod.Cex
-{
-    using Exceptions;
+    public class CexNonceException : CexApiException {
 
-    public class CexNonceException : CexApiException
-    {
-
-        public CexNonceException(HttpResponseMessage response, string message) : base(response, message) {}
+        public CexNonceException( HttpResponseMessage response, string message ) : base( response, message ) { }
 
     }
 }

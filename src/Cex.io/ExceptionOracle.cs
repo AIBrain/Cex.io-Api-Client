@@ -2,6 +2,7 @@
     using System.Diagnostics;
     using System.Net.Http;
     using Exceptions;
+    using Helpers;
 
     internal static class ExceptionOracle {
 

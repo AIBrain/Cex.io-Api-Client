@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 namespace Nextmethod.Cex
 {
     using Entities;
+    using Helpers;
 
     public class GhashApi : ICexClient
     {

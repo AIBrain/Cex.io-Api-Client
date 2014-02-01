@@ -3,6 +3,7 @@
     using System.Linq;
     using System.Security.Cryptography;
     using Annotations;
+    using Helpers;
 
     public sealed class ApiCredentials {
         private readonly HMAC _hmac;

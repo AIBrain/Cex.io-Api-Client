@@ -1,29 +1,21 @@
-﻿using System;
-using System.Linq;
+﻿namespace Nextmethod.Cex.Helpers {
+    internal static class JsonHelpers {
 
-namespace Nextmethod.Cex
-{
-    internal static class JsonHelpers
-    {
-
-        internal static bool ContainsProperty(dynamic This, string name)
-        {
-            if (This == null || string.IsNullOrEmpty(name)) return false;
-            var jo = This as JsonObject;
-            if (jo != null)
-            {
-                return jo.ContainsKey(name);
+        internal static bool ContainsProperty( dynamic json, string name ) {
+            if ( json == null || string.IsNullOrEmpty( name ) ) return false;
+            var jo = json as JsonObject;
+            if ( jo != null ) {
+                return jo.ContainsKey( name );
             }
 
-            var ja = This as JsonArray;
-            if (ja != null)
-            {
+            var ja = json as JsonArray;
+            if ( ja != null ) {
                 return false;
             }
 
-            if ((This is bool) || Equals(This, bool.FalseString) || Equals(This, bool.TrueString)) return false;
+            if ( ( json is bool ) || Equals( json, bool.FalseString ) || Equals( json, bool.TrueString ) ) return false;
 
-            return This.GetType().GetProperty(name);
+            return json.GetType().GetProperty( name );
         }
 
     }
