@@ -6,6 +6,8 @@ using Nextmethod.Cex;
 
 namespace SimpleExample
 {
+    using Nextmethod.Cex.Entities;
+
     class Program
     {
         static void Main(string[] args)

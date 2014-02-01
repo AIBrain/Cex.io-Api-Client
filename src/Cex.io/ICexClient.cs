@@ -3,6 +3,8 @@ using System.Linq;
 
 namespace Nextmethod.Cex
 {
+    using Entities;
+
     /// <summary>
     /// Marker interface for Extension Methods
     /// </summary>

@@ -1,26 +1,12 @@
-﻿using System;
-using System.Linq;
+﻿namespace Nextmethod.Cex.Entities {
+    using System;
+    using System.Linq;
 
-namespace Nextmethod.Cex
-{
-// ReSharper disable MemberCanBePrivate.Global
-// ReSharper disable InconsistentNaming
-    public class Balance
-    {
-
-        public Balance()
-        {
-            BF1 = SymbolBalance.Zero;
-            BTC = SymbolBalance.Zero;
-            DVC = SymbolBalance.Zero;
-            GHS = SymbolBalance.Zero;
-            IXC = SymbolBalance.Zero;
-            LTC = SymbolBalance.Zero;
-            NMC = SymbolBalance.Zero;
-        }
-
+    // ReSharper disable MemberCanBePrivate.Global
+    // ReSharper disable InconsistentNaming
+    public class Balance {
         public SymbolBalance BF1 { get; internal set; }
-        
+
         public SymbolBalance BTC { get; internal set; }
 
         public SymbolBalance DVC { get; internal set; }
@@ -35,142 +21,108 @@ namespace Nextmethod.Cex
 
         public Timestamp Timestamp { get; internal set; }
 
-        public SymbolBalance this[Symbol s]
-        {
+        public Balance() {
+            this.BF1 = SymbolBalance.Zero;
+            this.BTC = SymbolBalance.Zero;
+            this.DVC = SymbolBalance.Zero;
+            this.GHS = SymbolBalance.Zero;
+            this.IXC = SymbolBalance.Zero;
+            this.LTC = SymbolBalance.Zero;
+            this.NMC = SymbolBalance.Zero;
+        }
 
-            #region Symbol Indexer
+        internal static Balance FromDynamic( dynamic data ) {
+            var balance = new Balance();
+            var json = data as JsonObject;
+            if ( json == null ) return balance;
 
-            get
-            {
-                switch (s)
-                {
-                    case Symbol.BF1:
-                        return BF1;
-
-                    case Symbol.BTC:
-                        return BTC;
-
-                    case Symbol.DVC:
-                        return DVC;
-
-                    case Symbol.GHS:
-                        return GHS;
-
-                    case Symbol.IXC:
-                        return IXC;
-
-                    case Symbol.LTC:
-                        return LTC;
-
-                    case Symbol.NMC:
-                        return NMC;
-
-                    default:
-                        throw new IndexOutOfRangeException(string.Format("{0} does not exist", s.Name()));
+            foreach ( var sym in Enum.GetValues( typeof( Symbol ) ).Cast<Symbol>() ) {
+                if ( !json.ContainsKey( sym.Name() ) ) {
+                    continue;
+                }
+                var symJson = json[ sym.Name() ] as JsonObject;
+                if ( symJson != null ) {
+                    balance[ sym ] = SymbolBalance.FromDynamic( symJson );
                 }
             }
 
-            internal set
-            {
-                switch (s)
-                {
+            balance.Timestamp = data[ "timestamp" ];
+
+            return balance;
+        }
+
+        public SymbolBalance this[ Symbol s ] {
+
+            #region Symbol Indexer
+
+            get {
+                switch ( s ) {
                     case Symbol.BF1:
-                        BF1 = value;
+                        return this.BF1;
+
+                    case Symbol.BTC:
+                        return this.BTC;
+
+                    case Symbol.DVC:
+                        return this.DVC;
+
+                    case Symbol.GHS:
+                        return this.GHS;
+
+                    case Symbol.IXC:
+                        return this.IXC;
+
+                    case Symbol.LTC:
+                        return this.LTC;
+
+                    case Symbol.NMC:
+                        return this.NMC;
+
+                    default:
+                        throw new IndexOutOfRangeException( string.Format( "{0} does not exist", s.Name() ) );
+                }
+            }
+
+            internal set {
+                switch ( s ) {
+                    case Symbol.BF1:
+                        this.BF1 = value;
                         break;
 
                     case Symbol.BTC:
-                        BTC = value;
+                        this.BTC = value;
                         break;
 
                     case Symbol.DVC:
-                        DVC = value;
+                        this.DVC = value;
                         break;
 
                     case Symbol.GHS:
-                        GHS = value;
+                        this.GHS = value;
                         break;
 
                     case Symbol.IXC:
-                        IXC = value;
+                        this.IXC = value;
                         break;
 
                     case Symbol.LTC:
-                        LTC = value;
+                        this.LTC = value;
                         break;
 
                     case Symbol.NMC:
-                        NMC = value;
+                        this.NMC = value;
                         break;
 
                     default:
-                        throw new IndexOutOfRangeException(string.Format("{0} does not exist", s.Name()));
+                        throw new IndexOutOfRangeException( string.Format( "{0} does not exist", s.Name() ) );
                 }
             }
 
             #endregion
 
         }
-
-        internal static Balance FromDynamic(dynamic data)
-        {
-            var balance = new Balance();
-            var json = data as JsonObject;
-            if (json == null) return balance;
-
-            foreach (var sym in Enum.GetValues(typeof (Symbol)).Cast<Symbol>())
-            {
-                if (json.ContainsKey(sym.Name()))
-                {
-                    var symJson = json[sym.Name()] as JsonObject;
-                    if (symJson != null)
-                    {
-                        balance[sym] = SymbolBalance.FromDynamic(symJson);
-                    }
-                }
-            }
-
-            balance.Timestamp = data["timestamp"];
-
-            return balance;
-        }
-
     }
 
-    public class SymbolBalance
-    {
-
-        private const decimal DecZero = 0.0m;
-
-        public static readonly SymbolBalance Zero = new SymbolBalance();
-
-        public SymbolBalance(decimal available = DecZero, decimal bonus = DecZero, decimal orders = DecZero)
-        {
-            Available = available != DecZero ? available : DecZero;
-            Bonus = bonus != DecZero ? bonus : DecZero;
-            Orders = orders != DecZero ? orders : DecZero;
-        }
-
-        public decimal Available { get; private set; }
-
-        public decimal Bonus { get; private set; }
-
-        public decimal Orders { get; private set; }
-
-        public override string ToString()
-        {
-            return string.Format("Available: {0}, Bonus: {1}, Orders: {2}", Available, Bonus, Orders);
-        }
-
-        internal static SymbolBalance FromDynamic(JsonObject data)
-        {
-            var available = data.ContainsKey("available") ? Convert.ToDecimal(data["available"]) : 0m;
-            var bonus = data.ContainsKey("bonus") ? Convert.ToDecimal(data["bonus"]) : 0m;
-            var orders = data.ContainsKey("orders") ? Convert.ToDecimal(data["orders"]) : 0m;
-
-            return new SymbolBalance(available, bonus, orders);
-        }
-
-    }
-// ReSharper restore InconsistentNaming
-// ReSharper restore MemberCanBePrivate.Global
+    // ReSharper restore InconsistentNaming
+    // ReSharper restore MemberCanBePrivate.Global
 }
